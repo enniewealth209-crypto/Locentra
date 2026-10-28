@@ -1,0 +1,195 @@
+Country,Capital,Continent,Population,Country Code
+Afghanistan,Kabul,Asia,36432000,af
+Albania,Tirana,Europe,2684000,al
+Algeria,Algiers,Africa,47803000,dz
+Andorra,Andorra la Vella,Europe,78000,ad
+Angola,Luanda,Africa,36177000,ao
+Antigua and Barbuda,Saint John's,North America,105200,ag
+Argentina,Buenos Aires,South America,47489000,ar
+Armenia,Yerevan,Asia,2646000,am
+Australia,Canberra,Oceania,27978000,au
+Austria,Vienna,Europe,9240000,at
+Azerbaijan,Baku,Asia,10358000,az
+Bahamas,Nassau,North America,393000,bs
+Bahrain,Manama,Asia,1642000,bh
+Bangladesh,Dhaka,Asia,177818044,bd
+Barbados,Bridgetown,North America,287000,bb
+Belarus,Minsk,Europe,9460000,by
+Belgium,Brussels,Europe,11500000,be
+Belize,Belmopan,North America,419000,bz
+Benin,Porto-Novo,Africa,12900000,bj
+Bhutan,Thimphu,Asia,771000,bt
+Bolivia,Sucre (official),South America,12400000,bo
+Bosnia and Herzegovina,Sarajevo,Europe,3280000,ba
+Botswana,Gaborone,Africa,2420000,bw
+Brazil,Brasília,South America,213562666,br
+Brunei,Bandar Seri Begawan,Asia,453000,bn
+Bulgaria,Sofia,Europe,6920000,bg
+Burkina Faso,Ouagadougou,Africa,22000000,bf
+Burundi,Gitega,Africa,12200000,bi
+Cabo Verde,Praia,Africa,555000,cv
+Cambodia,Phnom Penh,Asia,16800000,kh
+Cameroon,Yaoundé,Africa,27000000,cm
+Canada,Ottawa,North America,39000000,ca
+Central African Republic,Bangui,Africa,4900000,cf
+Chad,N'Djamena,Africa,16200000,td
+Chile,Santiago,South America,19100000,cl
+China,Beijing,Asia,1412914089,cn
+Colombia,Bogotá,South America,51200000,co
+Comoros,Moroni,Africa,870000,km
+Congo (Republic),Brazzaville,Africa,5500000,cg
+Congo (Dem. Rep.),Kinshasa,Africa,116000000,cd
+Costa Rica,San José,North America,5180000,cr
+Côte d'Ivoire,Yamoussoukro,Africa,26900000,ci
+Croatia,Zagreb,Europe,4070000,hr
+Cuba,Havana,North America,11200000,cu
+Cyprus,Nicosia,Europe,1200000,cy
+Czech Republic,Prague,Europe,10700000,cz
+Denmark,Copenhagen,Europe,5900000,dk
+Djibouti,Djibouti,Africa,1090000,dj
+Dominica,Roseau,North America,72000,dm
+Dominican Republic,Santo Domingo,North America,11100000,do
+Ecuador,Quito,South America,17600000,ec
+Egypt,Cairo,Africa,120000000,eg
+El Salvador,San Salvador,North America,6500000,sv
+Equatorial Guinea,Malabo,Africa,1430000,gq
+Eritrea,Asmara,Africa,3680000,er
+Estonia,Tallinn,Europe,1330000,ee
+Eswatini,Mbabane,Africa,1220000,sz
+Ethiopia,Addis Ababa,Africa,138902185,et
+Fiji,Suva,Oceania,910000,fj
+Finland,Helsinki,Europe,5600000,fi
+France,Paris,Europe,68000000,fr
+Gabon,Libreville,Africa,2400000,ga
+Gambia,Banjul,Africa,2800000,gm
+Georgia,Tbilisi,Asia,3700000,ge
+Germany,Berlin,Europe,84000000,de
+Ghana,Accra,Africa,33000000,gh
+Greece,Athens,Europe,10400000,gr
+Grenada,St. George's,North America,112000,gd
+Guatemala,Guatemala City,North America,17200000,gt
+Guinea,Conakry,Africa,13100000,gn
+Guinea-Bissau,Bissau,Africa,2000000,gw
+Guyana,Georgetown,South America,790000,gy
+Haiti,Port-au-Prince,North America,11400000,ht
+Honduras,Tegucigalpa,North America,10200000,hn
+Hungary,Budapest,Europe,9700000,hu
+Iceland,Reykjavik,Europe,380000,is
+India,New Delhi,Asia,1476625576,in
+Indonesia,Jakarta,Asia,287886782,id
+Iran,Tehran,Asia,85000000,ir
+Iraq,Baghdad,Asia,42000000,iq
+Ireland,Dublin,Europe,5200000,ie
+Israel,Jerusalem,Asia,9800000,il
+Italy,Rome,Europe,59000000,it
+Jamaica,Kingston,North America,3000000,jm
+Japan,Tokyo,Asia,122427731,jp
+Jordan,Amman,Asia,10000000,jo
+Kazakhstan,Astana,Asia,19000000,kz
+Kenya,Nairobi,Africa,55000000,ke
+Kiribati,South Tarawa,Oceania,120000,ki
+Kuwait,Kuwait City,Asia,4700000,kw
+Kyrgyzstan,Bishkek,Asia,7000000,kg
+Laos,Vientiane,Asia,7300000,la
+Latvia,Riga,Europe,1900000,lv
+Lebanon,Beirut,Asia,6900000,lb
+Lesotho,Maseru,Africa,2300000,ls
+Liberia,Monrovia,Africa,5000000,lr
+Libya,Tripoli,Africa,6900000,ly
+Liechtenstein,Vaduz,Europe,39000,li
+Lithuania,Vilnius,Europe,2800000,lt
+Luxembourg,Luxembourg,Europe,650000,lu
+Madagascar,Antananarivo,Africa,31000000,mg
+Malawi,Lilongwe,Africa,22000000,mw
+Malaysia,Kuala Lumpur,Asia,33000000,my
+Maldives,Male,Asia,540000,mv
+Mali,Bamako,Africa,23000000,ml
+Malta,Valletta,Europe,520000,mt
+Marshall Islands,Majuro,Oceania,60000,mh
+Mauritania,Nouakchott,Africa,5100000,mr
+Mauritius,Port Louis,Africa,1300000,mu
+Mexico,Mexico City,North America,132997658,mx
+Micronesia,Palikir,Oceania,115000,fm
+Moldova,Chișinău,Europe,2600000,md
+Monaco,Monaco,Europe,39000,mc
+Mongolia,Ulaanbaatar,Asia,3300000,mn
+Montenegro,Podgorica,Europe,620000,me
+Morocco,Rabat,Africa,37400000,ma
+Mozambique,Maputo,Africa,34000000,mz
+Myanmar,Naypyidaw,Asia,54000000,mm
+Namibia,Windhoek,Africa,2700000,na
+Nauru,Yaren (de facto),Oceania,13000,nr
+Nepal,Kathmandu,Asia,31000000,np
+Netherlands,Amsterdam,Europe,17800000,nl
+New Zealand,Wellington,Oceania,5200000,nz
+Nicaragua,Managua,North America,7000000,ni
+Niger,Niamey,Africa,28000000,ng
+Nigeria,Abuja,Africa,242431832,ng
+North Korea,Pyongyang,Asia,25700000,kp
+North Macedonia,Skopje,Europe,2100000,mk
+Norway,Oslo,Europe,5500000,no
+Oman,Muscat,Asia,5100000,om
+Pakistan,Islamabad,Asia,259299791,pk
+Palau,Ngerulmud,Oceania,18000,pw
+Panama,Panama City,North America,4300000,pa
+Papua New Guinea,Port Moresby,Oceania,9300000,pg
+Paraguay,Asunción,South America,7100000,py
+Peru,Lima,South America,33300000,pe
+Philippines,Manila,Asia,117724471,ph
+Poland,Warsaw,Europe,37700000,pl
+Portugal,Lisbon,Europe,10300000,pt
+Qatar,Doha,Asia,3100000,qa
+Romania,Bucharest,Europe,19200000,ro
+Russia,Moscow,Europe/Asia,143394458,ru
+Rwanda,Kigali,Africa,14000000,rw
+Saint Kitts and Nevis,Basseterre,North America,53000,kn
+Saint Lucia,Castries,North America,180000,lc
+Saint Vincent and the Grenadines,Kingstown,North America,110000,vc
+Samoa,Apia,Oceania,200000,ws
+San Marino,San Marino,Europe,34000,sm
+Sao Tome and Principe,São Tomé,Africa,220000,st
+Saudi Arabia,Riyadh,Asia,36000000,sa
+Senegal,Dakar,Africa,18000000,sn
+Serbia,Belgrade,Europe,6900000,rs
+Seychelles,Victoria,Africa,110000,sc
+Sierra Leone,Freetown,Africa,8100000,sl
+Singapore,Singapore,Asia,5800000,sg
+Slovakia,Bratislava,Europe,5400000,sk
+Slovenia,Ljubljana,Europe,2100000,si
+Solomon Islands,Honiara,Oceania,700000,sb
+Somalia,Mogadishu,Africa,18000000,so
+South Africa,Pretoria,Africa,60000000,za
+South Korea,Seoul,Asia,51700000,kr
+South Sudan,Juba,Africa,11000000,ss
+Spain,Madrid,Europe,48000000,es
+Sri Lanka,Sri Jayawardenepura Kotte,Asia,22000000,lk
+Sudan,Khartoum,Africa,44000000,sd
+Suriname,Paramaribo,South America,600000,sr
+Sweden,Stockholm,Europe,10500000,se
+Switzerland,Bern,Europe,8800000,ch
+Syria,Damascus,Asia,17500000,sy
+Taiwan,Taipei,Asia,23000000,tw
+Tajikistan,Dushanbe,Asia,9900000,tj
+Tanzania,Dodoma,Africa,102000000,tz
+Thailand,Bangkok,Asia,71000000,th
+Togo,Lomé,Africa,9000000,tg
+Tonga,Nukuʻalofa,Oceania,110000,to
+Trinidad and Tobago,Port of Spain,North America,1400000,tt
+Tunisia,Tunis,Africa,12000000,tn
+Turkey,Ankara,Europe/Asia,85000000,tr
+Turkmenistan,Ashgabat,Asia,6000000,tm
+Tuvalu,Funafuti,Oceania,12000,tv
+Uganda,Kampala,Africa,48000000,ug
+Ukraine,Kyiv,Europe,41000000,ua
+United Arab Emirates,Abu Dhabi,Asia,9800000,ae
+United Kingdom,London,Europe,67000000,gb
+United States,Washington D.C.,North America,349035494,us
+Uruguay,Montevideo,South America,3500000,uy
+Uzbekistan,Tashkent,Asia,36000000,uz
+Vanuatu,Port Vila,Oceania,320000,vu
+Vatican City,Vatican City,Europe,800,va
+Venezuela,Caracas,South America,28000000,ve
+Vietnam,Hanoi,Asia,102177431,vn
+Yemen,Sana'a,Asia,33000000,ye
+Zambia,Lusaka,Africa,21000000,zm
+Zimbabwe,Harare,Africa,16000000,zw
