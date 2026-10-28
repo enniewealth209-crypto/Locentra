@@ -130,6 +130,9 @@ class CountryLogic:
     def get_all_countries(self) -> list[str]:
         return list(self.country_names)
 
+    def get_all_country_records(self) -> list[dict]:
+        return list(self._countries.values())
+
     def get_continent_summary(self) -> dict[str, int]:
         """Return {continent_label: count} sorted alphabetically."""
         summary: dict[str, int] = {}
