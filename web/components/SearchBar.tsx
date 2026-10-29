@@ -105,9 +105,9 @@ export default function SearchBar({
         )}
       >
         {loading ? (
-          <Loader2 size={20} className="shrink-0 text-[var(--accent)] animate-spin" />
+          <Loader2 size={20} className="shrink-0 animate-spin" />
         ) : (
-          <Search size={20} className="shrink-0 text-[var(--text-muted)]" />
+          <Search size={20} className="shrink-0" />
         )}
 
         <input
@@ -120,8 +120,7 @@ export default function SearchBar({
           placeholder="Search any country…"
           autoComplete="off"
           spellCheck={false}
-          className="flex-1 bg-transparent text-base text-[var(--text-primary)]
-                     placeholder:text-[var(--text-muted)] outline-none"
+          className="flex-1 bg-transparent text-base outline-none"
         />
 
         <AnimatePresence>
@@ -132,9 +131,7 @@ export default function SearchBar({
               exit={{ opacity: 0, scale: 0.7 }}
               transition={{ duration: 0.15 }}
               onClick={clear}
-              className="shrink-0 rounded-full p-1 text-[var(--text-muted)]
-                         hover:text-[var(--text-primary)] hover:bg-white/10 transition-colors"
-              aria-label="Clear search"
+              className="shrink-0 rounded-full p-1 hover:bg-white/10 transition-colors "aria-label="Clear search"
             >
               <X size={16} />
             </motion.button>
@@ -145,10 +142,8 @@ export default function SearchBar({
           whileTap={{ scale: 0.95 }}
           onClick={() => commit(value)}
           disabled={!value.trim() || loading}
-          className="shrink-0 rounded-xl px-4 py-1.5 text-sm font-semibold
-                     bg-[var(--accent)] hover:bg-[var(--accent-hover)]
-                     disabled:opacity-40 disabled:cursor-not-allowed
-                     transition-colors text-white"
+          className="shrink-0 rounded-xl px-4 py-1.5 text-sm font-semibold hover:disabled:opacity-40 disabled:cursor-not-allowed
+          transition-colors text-black bg"
         >
           Search
         </motion.button>
@@ -162,7 +157,7 @@ export default function SearchBar({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute z-50 mt-2 w-full rounded-2xl glass-elevated
+            className="absolute z-50 mt-2 w-full rounded-2xl bg-white glass-elevated
                        overflow-hidden shadow-2xl shadow-black/40"
             role="listbox"
           >

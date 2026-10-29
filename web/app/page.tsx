@@ -1,164 +1,181 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Globe, AlertCircle } from "lucide-react";
+import { Compass, MapPinned, Search, SlidersHorizontal, X } from "lucide-react";
 
-import SearchBar from "../components/SearchBar";
 import CountryCard from "../components/CountryCard";
-import HistorySidebar from "../components/HistorySidebar";
-import EmptyState from "../components/EmptyState";
-import { fetchCountries, fetchSuggestions, fetchCountry, fetchExtra } from "../lib/api";
+import SearchBar from "../components/SearchBar";
+import WorldMapPanel from "../components/WorldMapPanel";
+import { fetchCountries, fetchCountry, fetchExtra, fetchSuggestions } from "../lib/api";
 import type { CountryRecord, ExtraInfo } from "../lib/api";
 
+const ALL_REGIONS = "All regions";
+
 export default function HomePage() {
-  /* ── search state ─────────────────────────────────────────────────────── */
+  const [countries, setCountries] = useState<CountryRecord[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<CountryRecord | null>(null);
+  const [extra, setExtra] = useState<ExtraInfo | null>(null);
+  const [extraLoading, setExtraLoading] = useState(false);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [searching, setSearching] = useState(false);
+  const [regionFilter, setRegionFilter] = useState<string>(ALL_REGIONS);
   const [error, setError] = useState<string | null>(null);
-
-  /* ── result state ─────────────────────────────────────────────────────── */
-  const [country, setCountry] = useState<CountryRecord | null>(null);
-  const [extra, setExtra] = useState<ExtraInfo | null>(null);
-  const [extraLoading, setExtraLoading] = useState(false);
-
-  /* ── history ──────────────────────────────────────────────────────────── */
-  const [history, setHistory] = useState<string[]>([]);
-  const [countries, setCountries] = useState<CountryRecord[]>([]);
   const [countriesError, setCountriesError] = useState(false);
-
-  /* Generation counter — prevents stale async results overwriting newer ones */
-  const genRef = useRef(0);
-
-  /* Debounce suggestions */
-  const suggestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     fetchCountries()
-      .then(setCountries)
+      .then((items) => setCountries(items))
       .catch(() => setCountriesError(true));
   }, []);
 
-  const handleQueryChange = useCallback((q: string) => {
-    setQuery(q);
-    if (suggestTimer.current) clearTimeout(suggestTimer.current);
-    if (!q.trim()) { setSuggestions([]); return; }
-    suggestTimer.current = setTimeout(async () => {
-      const hits = await fetchSuggestions(q);
-      setSuggestions(hits);
-    }, 120);
-  }, []);
+  const regions = useMemo(
+    () => [...new Set(countries.map((country) => country.continent))].sort(),
+    [countries]
+  );
 
-  const handleSearch = useCallback(async (q: string) => {
-    const trimmed = q.trim();
-    if (!trimmed) return;
+  const filteredResults = useMemo(() => {
+    const term = query.trim().toLowerCase();
 
-    setSuggestions([]);
-    setError(null);
-    setSearching(true);
-    setCountry(null);
-    setExtra(null);
+    return countries.filter((country) => {
+      const matchesRegion = regionFilter === ALL_REGIONS || country.continent === regionFilter;
+      if (!matchesRegion) return false;
+      if (!term) return true;
 
-    const gen = ++genRef.current;
+      const haystack = `${country.name} ${country.capital}`.toLowerCase();
+      return haystack.includes(term);
+    });
+  }, [countries, query, regionFilter]);
 
+  const loadExtraData = useCallback(async (countryRecord: CountryRecord) => {
+    setExtraLoading(true);
     try {
-      const result = await fetchCountry(trimmed);
-      if (gen !== genRef.current) return; // superseded
-
-      if (!result) {
-        setError(`No country found for "${trimmed}". Check the spelling.`);
-        setSearching(false);
-        return;
-      }
-
-      setCountry(result);
-      setSearching(false);
-
-      // Add to history (deduplicated, newest first)
-      setHistory((prev) => {
-        const next = [result.name, ...prev.filter((n) => n !== result.name)];
-        return next.slice(0, 12);
-      });
-
-      // Fetch enrichment asynchronously
-      if (result.country_code) {
-        setExtraLoading(true);
-        const enriched = await fetchExtra(result.country_code);
-        if (gen === genRef.current) {
-          setExtra(enriched);
-          setExtraLoading(false);
-        }
-      }
+      const enriched = await fetchExtra(countryRecord.country_code);
+      setExtra(enriched);
     } catch {
-      if (gen === genRef.current) {
-        setError("Could not reach the API. Make sure the backend is running on port 8000.");
-        setSearching(false);
-      }
+      setExtra({ area: "N/A", currency: "N/A", language: "N/A", timezone: "N/A" });
+    } finally {
+      setExtraLoading(false);
     }
   }, []);
 
-  /* Keyboard shortcut: "/" focuses search */
+  const selectCountryRecord = useCallback(
+    async (countryRecord: CountryRecord) => {
+      setSelectedCountry(countryRecord);
+      setQuery(countryRecord.name);
+      setError(null);
+      setSuggestions([]);
+      await loadExtraData(countryRecord);
+    },
+    [loadExtraData]
+  );
+
+  const handleQueryChange = useCallback((value: string) => {
+    setQuery(value);
+    if (!value.trim()) {
+      setSuggestions([]);
+      return;
+    }
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const matches = await fetchSuggestions(value);
+        setSuggestions(matches);
+      } catch {
+        setSuggestions([]);
+      }
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const handleSearch = useCallback(
+    async (value: string) => {
+      const trimmed = value.trim();
+      setQuery(trimmed);
+      setSuggestions([]);
+
+      if (!trimmed) {
+        setError(null);
+        setSelectedCountry(null);
+        setExtra(null);
+        return;
+      }
+
+      setSearching(true);
+      setError(null);
+
+      const candidates = countries.filter(
+        (country) =>
+          (regionFilter === ALL_REGIONS || country.continent === regionFilter) &&
+          (`${country.name} ${country.capital}`.toLowerCase().includes(trimmed.toLowerCase()))
+      );
+
+      const exact =
+        candidates.find((country) => country.name.toLowerCase() === trimmed.toLowerCase()) ??
+        candidates[0] ??
+        countries.find((country) => country.name.toLowerCase() === trimmed.toLowerCase()) ??
+        countries.find((country) => country.capital.toLowerCase() === trimmed.toLowerCase());
+
+      try {
+        const result = exact ?? (await fetchCountry(trimmed));
+        if (!result) {
+          setError(`No country match for “${trimmed}”. Try a different spelling.`);
+          setSearching(false);
+          return;
+        }
+
+        await selectCountryRecord(result);
+      } catch {
+        setError("Could not reach the API. Please ensure the backend is running on port 8000.");
+      } finally {
+        setSearching(false);
+      }
+    },
+    [countries, regionFilter, selectCountryRecord]
+  );
+
+  const clearFilters = useCallback(() => {
+    setQuery("");
+    setSuggestions([]);
+    setRegionFilter(ALL_REGIONS);
+  }, []);
+
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "/" && document.activeElement?.tagName !== "INPUT") {
-        e.preventDefault();
+    const handler = (event: KeyboardEvent) => {
+      if (event.key === "/" && document.activeElement?.tagName !== "INPUT") {
+        event.preventDefault();
         document.querySelector<HTMLInputElement>('input[type="text"]')?.focus();
       }
     };
+
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
   return (
-    <>
-      {/* Animated mesh background */}
-      <div className="mesh-bg" aria-hidden />
-
-      <div className="relative z-10 min-h-screen flex flex-col">
-        {/* ── Nav ─────────────────────────────────────────────────────────── */}
-        <motion.header
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center justify-between px-6 py-4
-                     border-b border-[var(--border)] glass sticky top-0 z-20"
-        >
-          <div className="flex items-center gap-2.5">
-            <Globe size={22} className="text-[var(--accent)]" />
-            <span className="font-bold text-base text-[var(--text-primary)] tracking-tight">
-              Locentra
-            </span>
+    <div className="atlas-shell">
+      <header className="topbar">
+        <div className="brand-mark">
+          <div className="brand-icon">
+            <Compass size={16} />
           </div>
-          <span className="stat-badge rounded-full px-3 py-1 text-xs font-medium hidden sm:block">
-            {countries.length || "..."} countries
-          </span>
-        </motion.header>
+          <span>Locentra</span>
+        </div>
+        <div className="topbar-meta">
+          <span className="meta-chip">{countries.length || "..."} countries</span>
+          <span className="meta-chip subtle">Atlas</span>
+        </div>
+      </header>
 
-        {/* ── Hero ────────────────────────────────────────────────────────── */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="px-6 pt-14 pb-8 text-center max-w-2xl mx-auto w-full"
-        >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.15, type: "spring", stiffness: 200 }}
-            className="text-6xl mb-4 select-none"
-          >
-            🌍
-          </motion.div>
+      <main className="workspace-panel">
+        <aside className="search-rail panel">
+          <div className="section-label-row">
+            <span className="section-label">Explore</span>
+            <span className="section-count">{filteredResults.length} results</span>
+          </div>
 
-          <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight mb-3">
-            <span className="gradient-text">Explore Every Country</span>
-          </h1>
-          <p className="text-[var(--text-secondary)] text-base sm:text-lg mb-8">
-            Capitals, populations, currencies, languages, timezones — all in one place.
-          </p>
-
-          {/* Search bar */}
           <SearchBar
             onSearch={handleSearch}
             suggestions={suggestions}
@@ -167,143 +184,104 @@ export default function HomePage() {
             initialValue={query}
           />
 
-          {/* Keyboard hint */}
-          <p className="mt-3 text-[10px] text-[var(--text-muted)]">
-            Press <kbd className="px-1.5 py-0.5 rounded bg-white/10 font-mono text-[10px]">/</kbd> to focus search
-          </p>
-        </motion.section>
+          <div className="toolbar">
+            <label className="filter-wrap">
+              <SlidersHorizontal size={14} />
+              <select
+                aria-label="Filter by continent"
+                value={regionFilter}
+                onChange={(event) => setRegionFilter(event.target.value)}
+              >
+                <option value={ALL_REGIONS}>{ALL_REGIONS}</option>
+                {regions.map((region) => (
+                  <option key={region} value={region}>
+                    {region}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-        {/* ── Main content ────────────────────────────────────────────────── */}
-        <main className="flex-1 px-4 sm:px-6 pb-16 max-w-6xl mx-auto w-full">
-          <div className="flex flex-col lg:flex-row gap-6 items-start">
-
-            {/* Results / empty state — takes up remaining width */}
-            <div className="flex-1 min-w-0">
-              {/* Error banner */}
-              <AnimatePresence>
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.25 }}
-                    className="flex items-center gap-3 rounded-2xl px-4 py-3 mb-4
-                               bg-[rgba(239,68,68,0.10)] border border-[rgba(239,68,68,0.25)]
-                               text-[#fca5a5] text-sm"
-                  >
-                    <AlertCircle size={16} className="shrink-0" />
-                    {error}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Skeleton while searching */}
-              <AnimatePresence>
-                {searching && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="glass-elevated rounded-3xl overflow-hidden"
-                  >
-                    <div className="px-7 pt-6 pb-4 border-b border-[var(--border)]">
-                      <div className="shimmer h-8 w-48 mb-2 rounded-lg" />
-                      <div className="shimmer h-4 w-24 rounded" />
-                    </div>
-                    <div className="grid md:grid-cols-[1fr_220px]">
-                      <div className="px-7 py-5 space-y-4">
-                        {[...Array(6)].map((_, i) => (
-                          <div key={i} className="flex items-center gap-4">
-                            <div className="shimmer w-6 h-4 rounded" />
-                            <div className="shimmer h-3 w-20 rounded" />
-                            <div className="shimmer h-3 flex-1 max-w-xs rounded" />
-                          </div>
-                        ))}
-                      </div>
-                      <div className="flex items-center justify-center p-6
-                                      border-t md:border-t-0 md:border-l border-[var(--border)]">
-                        <div className="shimmer w-48 h-28 rounded-xl" />
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Country result */}
-              <AnimatePresence mode="wait">
-                {country && !searching && (
-                  <CountryCard
-                    key={country.name}
-                    country={country}
-                    extra={extra}
-                    extraLoading={extraLoading}
-                  />
-                )}
-              </AnimatePresence>
-
-              {/* Empty state — shown when no search has been done */}
-              <AnimatePresence>
-                {!country && !searching && !error && (
-                  <EmptyState
-                    countries={countries}
-                    error={countriesError}
-                    onSelect={(name) => {
-                      setQuery(name);
-                      handleSearch(name);
-                    }}
-                  />
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* History sidebar — only visible once there's history */}
-            <AnimatePresence>
-              {history.length > 0 && (
-                <motion.aside
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: "auto" }}
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.35 }}
-                  className="lg:w-52 w-full shrink-0"
-                >
-                  <HistorySidebar
-                    history={history}
-                    onSelect={(name) => {
-                      setQuery(name);
-                      handleSearch(name);
-                    }}
-                    onClear={() => setHistory([])}
-                    currentName={country?.name}
-                  />
-                </motion.aside>
-              )}
-            </AnimatePresence>
+            {(query || regionFilter !== ALL_REGIONS) && (
+              <button type="button" className="clear-button" onClick={clearFilters}>
+                <X size={14} />
+                Clear
+              </button>
+            )}
           </div>
-        </main>
 
-        {/* ── Footer ──────────────────────────────────────────────────────── */}
-        <footer className="text-center pb-6 text-[10px] text-[var(--text-muted)]">
-          Data from{" "}
-          <a
-            href="https://countries.dev"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-[var(--text-secondary)]"
-          >
-            countries.dev
-          </a>
-          {" · "}
-          Flags from{" "}
-          <a
-            href="https://flagcdn.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-[var(--text-secondary)]"
-          >
-            flagcdn.com
-          </a>
-        </footer>
-      </div>
-    </>
+          <div className="list-header">
+            <span>Countries</span>
+            <span>{filteredResults.length}</span>
+          </div>
+
+          {error && <div className="status-banner error">{error}</div>}
+
+          {countriesError ? (
+            <div className="empty-panel">
+              Country data is unavailable. Please check the backend connection.
+            </div>
+          ) : filteredResults.length === 0 ? (
+            <div className="empty-panel">
+              <Search size={18} />
+              <p>No matches in this region.</p>
+              <button type="button" className="ghost-button" onClick={clearFilters}>
+                Reset search
+              </button>
+            </div>
+          ) : (
+            <ul className="country-list">
+              {filteredResults.map((country) => (
+                <li key={country.name}>
+                  <button
+                    type="button"
+                    className={selectedCountry?.name === country.name ? "country-item active" : "country-item"}
+                    onClick={() => void selectCountryRecord(country)}
+                  >
+                    <span className="flag-pill">{country.country_code.toUpperCase() || "•"}</span>
+                    <span className="country-meta">
+                      <strong>{country.name}</strong>
+                      <small>{country.capital}</small>
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </aside>
+
+        <section className="map-column">
+          <WorldMapPanel countries={countries} selectedCountry={selectedCountry} onSelect={selectCountryRecord} />
+
+          <AnimatePresence mode="wait">
+            {selectedCountry ? (
+              <motion.div
+                key={selectedCountry.name}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 14 }}
+                transition={{ duration: 0.25 }}
+              >
+                <CountryCard country={selectedCountry} extra={extra} extraLoading={extraLoading} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="prompt"
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 14 }}
+                transition={{ duration: 0.25 }}
+                className="panel empty-country-panel"
+              >
+                <MapPinned size={18} />
+                <div>
+                  <h3>Select a country</h3>
+                  <p>Choose a country on the map or use the search panel to inspect its capital, population, currency and regional context.</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </section>
+      </main>
+    </div>
   );
 }

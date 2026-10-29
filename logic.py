@@ -8,8 +8,7 @@ from countries.dev (free, no API key) using fetch_extra_info().
 from __future__ import annotations
 
 import csv
-import os
-import sys
+from pathlib import Path
 
 import requests
 
@@ -25,15 +24,6 @@ def _normalise_continent(raw: str) -> str:
     """Return a clean continent label."""
     stripped = raw.strip()
     return _CONTINENT_MAP.get(stripped.lower(), stripped)
-
-
-def _get_data_path(filename: str) -> str:
-    """Resolve the data directory whether running from source or frozen."""
-    if getattr(sys, "frozen", False):
-        base = os.path.dirname(sys.executable)
-    else:
-        base = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(base, "data", filename)
 
 
 def _clean(row: dict, key: str, default: str = "N/A") -> str:
@@ -57,8 +47,8 @@ class CountryLogic:
     # ------------------------------------------------------------------
 
     def _load_data(self) -> None:
-        path = _get_data_path("countries.csv")
-        if not os.path.exists(path):
+        path = Path(__file__).resolve().parent / "data" / "countries.csv"
+        if not path.exists():
             raise FileNotFoundError(f"Data file not found: {path}")
 
         with open(path, newline="", encoding="utf-8") as fh:
@@ -127,19 +117,8 @@ class CountryLogic:
                     if q in n.lower() and not n.lower().startswith(q)]
         return (starts + contains)[:limit]
 
-    def get_all_countries(self) -> list[str]:
-        return list(self.country_names)
-
     def get_all_country_records(self) -> list[dict]:
         return list(self._countries.values())
-
-    def get_continent_summary(self) -> dict[str, int]:
-        """Return {continent_label: count} sorted alphabetically."""
-        summary: dict[str, int] = {}
-        for data in self._countries.values():
-            c = data["continent"]
-            summary[c] = summary.get(c, 0) + 1
-        return dict(sorted(summary.items()))
 
     def fetch_extra_info(self, country_code: str) -> dict:
         """

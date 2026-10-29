@@ -1,15 +1,10 @@
 import os
-from pathlib import Path
-
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "local-development-only-secret-key")
 DEBUG = os.environ.get("DJANGO_DEBUG", "true").lower() == "true"
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 INSTALLED_APPS = [
-    "django.contrib.staticfiles",
-    "rest_framework",
     "corsheaders",
     "countries",
 ]
@@ -30,9 +25,6 @@ APPEND_SLASH = False
 
 # No database needed — data comes from CSV via CountryLogic
 DATABASES = {}
-
-# Path to the CSV used by CountryLogic
-DATA_DIR = BASE_DIR.parent.parent / "data"
 
 STATIC_URL = "/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
